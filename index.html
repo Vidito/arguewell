@@ -1,0 +1,1072 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta
+      name="description"
+      content="ArgueWell: an interactive, research-informed introduction to argument analysis, evaluation, and construction."
+    />
+    <title>ArgueWell | Learn, Evaluate, and Build Arguments</title>
+    <style>
+      :root {
+        --bg: #f6f4ef;
+        --paper: #fff;
+        --ink: #17202a;
+        --muted: #647180;
+        --line: #dfe4e7;
+        --brand: #8a3f16;
+        --brand2: #c46b2c;
+        --soft: #fff1df;
+        --blue: #165d8f;
+        --blueSoft: #e8f3fa;
+        --green: #246b46;
+        --greenSoft: #e7f5ed;
+        --red: #9d2f2f;
+        --redSoft: #fbeaea;
+        --purple: #68458c;
+        --shadow: 0 8px 30px rgba(31, 41, 55, 0.08);
+        --radius: 14px;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font:
+          15.5px/1.68 Inter,
+          ui-sans-serif,
+          system-ui,
+          -apple-system,
+          'Segoe UI',
+          sans-serif;
+      }
+      button,
+      input {
+        font: inherit;
+      }
+      button {
+        cursor: pointer;
+      }
+      .skip {
+        position: fixed;
+        left: 12px;
+        top: -60px;
+        background: #000;
+        color: #fff;
+        padding: 10px 14px;
+        z-index: 1000;
+      }
+      .skip:focus {
+        top: 12px;
+      }
+      .app {
+        display: grid;
+        grid-template-columns: 286px minmax(0, 1fr);
+        grid-template-rows: 64px 1fr;
+        min-height: 100vh;
+      }
+      .top {
+        grid-column: 1/-1;
+        position: sticky;
+        top: 0;
+        z-index: 50;
+        background: rgba(255, 255, 255, 0.96);
+        backdrop-filter: blur(10px);
+        border-bottom: 1px solid var(--line);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 22px;
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 800;
+      }
+      .mark {
+        width: 34px;
+        height: 34px;
+        border-radius: 10px;
+        background: linear-gradient(135deg, var(--brand), var(--brand2));
+        color: #fff;
+        display: grid;
+        place-items: center;
+      }
+      .top-actions {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .progress {
+        width: 130px;
+        height: 7px;
+        border-radius: 10px;
+        background: #e7e9ea;
+        overflow: hidden;
+      }
+      .progress > span {
+        display: block;
+        height: 100%;
+        background: var(--brand2);
+        width: 0;
+      }
+      .small {
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .btn {
+        border: 1px solid transparent;
+        border-radius: 9px;
+        padding: 8px 12px;
+        background: transparent;
+        color: var(--ink);
+      }
+      .btn:hover,
+      .btn:focus-visible {
+        background: #f0eee9;
+        outline: 2px solid transparent;
+      }
+      .btn.primary {
+        background: var(--ink);
+        color: #fff;
+      }
+      .btn.outline {
+        border-color: var(--line);
+        background: #fff;
+      }
+      .mobile {
+        display: none;
+      }
+      .side {
+        position: sticky;
+        top: 64px;
+        height: calc(100vh - 64px);
+        overflow: auto;
+        background: #fff;
+        border-right: 1px solid var(--line);
+        padding: 18px 14px;
+      }
+      .part {
+        margin: 16px 8px 5px;
+        font-size: 10.5px;
+        font-weight: 800;
+        letter-spacing: 0.09em;
+        text-transform: uppercase;
+        color: #8b9298;
+      }
+      .nav {
+        width: 100%;
+        text-align: left;
+        border: 0;
+        background: transparent;
+        border-radius: 9px;
+        padding: 9px 9px;
+        display: grid;
+        grid-template-columns: 24px 1fr 18px;
+        gap: 7px;
+        align-items: center;
+        color: #2e3740;
+      }
+      .nav:hover {
+        background: #f5f3ef;
+      }
+      .nav.active {
+        background: var(--soft);
+        color: #71320f;
+        font-weight: 700;
+      }
+      .num {
+        font:
+          11px ui-monospace,
+          monospace;
+        color: #90979e;
+      }
+      .tick {
+        width: 16px;
+        height: 16px;
+        border: 1px solid #cfd5d8;
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+      }
+      .tick.done {
+        background: var(--green);
+        border-color: var(--green);
+        color: white;
+        font-size: 10px;
+      }
+      .main {
+        width: min(920px, 100%);
+        padding: 45px 56px 90px;
+      }
+      .eyebrow {
+        color: var(--brand);
+        text-transform: uppercase;
+        letter-spacing: 0.09em;
+        font-weight: 800;
+        font-size: 11px;
+      }
+      .module h1 {
+        font-size: clamp(28px, 4vw, 38px);
+        line-height: 1.15;
+        margin: 7px 0 8px;
+        letter-spacing: -0.025em;
+      }
+      .lead {
+        font-size: 17px;
+        color: var(--muted);
+        margin: 0 0 25px;
+      }
+      .home-hero {
+        background: linear-gradient(135deg, #fff8ed, #fff);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        padding: 28px;
+        margin: 24px 0;
+        box-shadow: var(--shadow);
+      }
+      .home-hero h2 {
+        margin: 0 0 8px;
+        font-size: clamp(24px, 4vw, 34px);
+        line-height: 1.2;
+      }
+      .home-hero p {
+        max-width: 680px;
+        margin: 0;
+      }
+      .home-actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 22px;
+      }
+      .objectives {
+        background: #fff;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        padding: 16px 19px;
+        margin: 22px 0;
+      }
+      .objectives strong {
+        display: block;
+        margin-bottom: 5px;
+      }
+      .content h2 {
+        font-size: 21px;
+        margin: 31px 0 10px;
+      }
+      .content h3 {
+        font-size: 17px;
+        margin: 23px 0 7px;
+      }
+      .content p {
+        margin: 0 0 14px;
+      }
+      .content li {
+        margin: 5px 0;
+      }
+      .card,
+      .example,
+      .practice,
+      .quiz {
+        background: #fff;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        padding: 20px;
+        margin: 18px 0;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.025);
+      }
+      .callout {
+        border-left: 4px solid var(--brand2);
+        background: var(--soft);
+        padding: 14px 17px;
+        margin: 18px 0;
+        border-radius: 0 10px 10px 0;
+      }
+      .callout.info {
+        border-color: var(--blue);
+        background: var(--blueSoft);
+      }
+      .callout.good {
+        border-color: var(--green);
+        background: var(--greenSoft);
+      }
+      .label {
+        font-size: 10.5px;
+        letter-spacing: 0.09em;
+        text-transform: uppercase;
+        color: var(--brand);
+        font-weight: 800;
+        margin-bottom: 8px;
+      }
+      .grid2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+      }
+      .mini {
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 15px;
+        background: #fff;
+      }
+      .mini h4 {
+        margin: 0 0 6px;
+        color: var(--brand);
+        font-size: 14px;
+      }
+      .argument {
+        font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+        background: #f7f8f8;
+        border-radius: 9px;
+        padding: 14px;
+        white-space: normal;
+      }
+      .map {
+        display: grid;
+        gap: 8px;
+        margin: 16px 0;
+      }
+      .node {
+        border: 1px solid #bbc8d0;
+        background: #fff;
+        border-radius: 9px;
+        padding: 11px;
+        text-align: center;
+      }
+      .arrow {
+        text-align: center;
+        color: var(--muted);
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 16px 0;
+        background: #fff;
+        border: 1px solid var(--line);
+      }
+      th,
+      td {
+        text-align: left;
+        vertical-align: top;
+        padding: 11px;
+        border-bottom: 1px solid var(--line);
+      }
+      th {
+        background: #f1f2f2;
+        font-size: 12px;
+      }
+      .quiz h3 {
+        margin-top: 0;
+      }
+      .options {
+        display: grid;
+        gap: 8px;
+      }
+      .option {
+        border: 1.5px solid var(--line);
+        background: #fff;
+        border-radius: 10px;
+        padding: 11px 13px;
+        text-align: left;
+      }
+      .option:hover:not(:disabled) {
+        border-color: #79858d;
+      }
+      .option.correct {
+        border-color: var(--green);
+        background: var(--greenSoft);
+      }
+      .option.wrong {
+        border-color: var(--red);
+        background: var(--redSoft);
+      }
+      .feedback {
+        margin-top: 12px;
+        padding: 12px;
+        border-radius: 9px;
+      }
+      .feedback.ok {
+        background: var(--greenSoft);
+        color: #164f34;
+      }
+      .feedback.no {
+        background: var(--redSoft);
+        color: #752020;
+      }
+      .navbuttons {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        border-top: 1px solid var(--line);
+        padding-top: 24px;
+        margin-top: 40px;
+      }
+      .modal-bg {
+        position: fixed;
+        inset: 0;
+        background: rgba(10, 15, 20, 0.5);
+        z-index: 100;
+        display: none;
+        place-items: center;
+        padding: 18px;
+      }
+      .modal-bg.show {
+        display: grid;
+      }
+      .modal {
+        width: min(700px, 100%);
+        max-height: 88vh;
+        overflow: auto;
+        background: white;
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: var(--shadow);
+      }
+      .modal-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .search {
+        width: 100%;
+        padding: 11px;
+        border: 1px solid var(--line);
+        border-radius: 9px;
+        margin: 12px 0;
+      }
+      .term {
+        padding: 12px 0;
+        border-bottom: 1px solid var(--line);
+      }
+      .term b {
+        display: block;
+      }
+      .game-score {
+        font-size: 38px;
+        font-weight: 800;
+        color: var(--brand);
+      }
+      .sources {
+        font-size: 13px;
+        color: var(--muted);
+        border-top: 1px solid var(--line);
+        padding-top: 16px;
+        margin-top: 30px;
+      }
+      .sources a {
+        color: var(--blue);
+      }
+      @media (max-width: 850px) {
+        .app {
+          grid-template-columns: 1fr;
+        }
+        .side {
+          display: none;
+          position: fixed;
+          z-index: 40;
+          left: 0;
+          width: 286px;
+          box-shadow: var(--shadow);
+        }
+        .side.open {
+          display: block;
+        }
+        .mobile {
+          display: inline-block;
+        }
+        .main {
+          padding: 30px 20px 70px;
+        }
+        .top-actions .labelhide,
+        .progress {
+          display: none;
+        }
+        .grid2 {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+    <div class="app">
+      <header class="top">
+        <div style="display: flex; align-items: center; gap: 8px">
+          <button class="btn mobile" id="menuBtn" aria-label="Open course menu">
+            ☰
+          </button>
+          <div class="brand"><span class="mark">A</span>ArgueWell</div>
+        </div>
+        <div class="top-actions">
+          <div class="progress" aria-hidden="true">
+            <span id="progressFill"></span>
+          </div>
+          <span class="small" id="progressText">0/0</span
+          ><button class="btn labelhide" id="glossaryBtn">Glossary</button
+          ><button class="btn outline" id="resetBtn">Reset</button>
+        </div>
+      </header>
+      <aside class="side" id="sidebar" aria-label="Course modules">
+        <div id="nav"></div>
+      </aside>
+      <main class="main" id="main" tabindex="-1"></main>
+    </div>
+    <div
+      class="modal-bg"
+      id="modalBg"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="modalTitle"
+    >
+      <div class="modal" id="modal"></div>
+    </div>
+    <script>
+      const modules = [
+        {
+          part: 'I. Foundations',
+          title: 'Argument, Argumentation, and Purpose',
+          sub: 'Treat argument as both a product of reasoning and a social process of critical exchange.',
+          objectives: [
+            'Distinguish argument from quarrel, explanation, and persuasion',
+            'Identify standpoint, reasons, audience, and dialogue goal',
+          ],
+          body: `
+<h2>Two related meanings</h2><p>An <strong>argument</strong> is a product: one or more reasons offered to support or challenge a claim. <strong>Argumentation</strong> is a process: people advance, test, revise, defend, or withdraw standpoints in a context.</p>
+<div class="callout info"><strong>Do not reduce argumentation to “winning.”</strong> A discussion can be persuasive yet unreasonable, or reasonable yet unsuccessful in changing minds. Good practice combines critical testing with fair and effective communication.</div>
+<h2>What makes a passage argumentative?</h2><p>Look for a <strong>standpoint</strong> that is open to doubt and at least one reason intended to increase its acceptability. A claim without support is an assertion, not yet an argument.</p>
+<div class="example"><div class="label">Worked example</div><p>“The university should extend library hours during exams because seat occupancy reaches capacity after 18:00 and many students lack quiet study space at home.”</p><ul><li><strong>Standpoint:</strong> Extend library hours during exams.</li><li><strong>Reasons:</strong> Evening demand reaches capacity; some students lack alternatives.</li><li><strong>Audience:</strong> University decision-makers.</li><li><strong>Purpose:</strong> Support a policy decision.</li></ul></div>
+<h2>Argument, explanation, and persuasion</h2><div class="grid2"><div class="mini"><h4>Argument</h4><p>Answers “Why should I accept this claim?” The claim is in doubt.</p></div><div class="mini"><h4>Explanation</h4><p>Answers “Why did this happen?” The event is normally accepted as having occurred.</p></div></div><p>The same sentence can function differently depending on context. “The road is wet because it rained” may explain accepted wetness, or argue for rainfall if the rainfall is disputed.</p>
+<div class="practice"><div class="label">Try it</div><p>Before evaluating a passage, write: <em>What is disputed? Who owes a reason? What outcome would count as resolution?</em></p></div>`,
+          q: 'Which feature is necessary for a passage to count as an argument?',
+          opts: [
+            'It makes someone change their mind',
+            'It contains an indicator word such as “therefore”',
+            'It offers at least one reason for or against a contestable claim',
+            'It uses formal logic',
+          ],
+          a: 2,
+          why: 'An argument requires a support or attack relation between reasons and a contestable claim. Indicator words and actual persuasion are neither necessary nor sufficient.',
+        },
+        {
+          part: 'I. Foundations',
+          title: 'Claims, Premises, and Inference',
+          sub: 'Reconstruct what is said, what is implied, and how the reasons are supposed to support the claim.',
+          objectives: [
+            'Recognize premise and conclusion indicators without relying on them mechanically',
+            'Reconstruct implicit premises charitably and cautiously',
+          ],
+          body: `
+<h2>The basic relation</h2><div class="argument">P1: Evening seat occupancy reaches capacity.<br>P2: Students need access to suitable study space.<br>C: Therefore, the university has a reason to extend library hours.</div><p>The <strong>inference</strong> is the support relation between premises and conclusion. Evaluation asks two distinct questions: Are the premises acceptable? If they are, how much support do they give the conclusion?</p>
+<h2>Indicators are clues, not guarantees</h2><div class="grid2"><div class="mini"><h4>Common reason indicators</h4><p>because, since, given that, considering that</p></div><div class="mini"><h4>Common conclusion indicators</h4><p>therefore, so, thus, hence, this suggests that</p></div></div><p>Words such as <em>since</em> and <em>so</em> also have non-argumentative uses. Determine function from context.</p>
+<h2>Implicit premises and enthymemes</h2><p>Everyday arguments often leave shared or obvious material unstated. An <strong>enthymeme</strong> is traditionally a rhetorical argument in which part of the reasoning is left implicit for the audience to supply. It is more precise than calling every incomplete fragment an enthymeme.</p>
+<div class="example"><div class="label">Reconstruction</div><p>“Mina is a licensed electrician, so she can probably diagnose the fault.”</p><p>Possible implicit premise: “Licensed electricians normally have the relevant competence to diagnose ordinary electrical faults.” The qualifier <em>probably</em> matters. Do not reconstruct the implausibly strict claim “All electricians diagnose every fault correctly.”</p></div>
+<div class="callout"><strong>Principle of charity, with limits:</strong> choose a plausible interpretation supported by wording and context. Do not invent a stronger case that the speaker could not reasonably have meant.</div>`,
+          q: 'What is the best reconstruction of “He is a trained meteorologist, so his short-term forecast deserves initial credibility”?',
+          opts: [
+            'All meteorologists are always correct',
+            'Trained meteorologists are normally competent in short-term forecasting',
+            'Anyone can forecast weather',
+            'The forecast must be false',
+          ],
+          a: 1,
+          why: 'The second option supplies a qualified, relevant link without turning a defeasible appeal to expertise into an unrealistic universal claim.',
+        },
+        {
+          part: 'I. Foundations',
+          title: 'Argument Structure and Mapping',
+          sub: 'See how reasons work together, independently, or in chains.',
+          objectives: [
+            'Distinguish linked, convergent, and serial support',
+            'Create a simple argument map before evaluating',
+          ],
+          body: `
+<h2>Three common structures</h2><table><tr><th>Structure</th><th>How it works</th><th>Diagnostic</th></tr><tr><td>Linked</td><td>Premises need one another to support the conclusion.</td><td>Remove one premise. Does the remaining reason lose most of its force?</td></tr><tr><td>Convergent</td><td>Separate reasons independently support the same conclusion.</td><td>Each reason still provides some support alone.</td></tr><tr><td>Serial</td><td>A premise supports an intermediate conclusion, which supports a further conclusion.</td><td>Look for a chain of sub-conclusions.</td></tr></table>
+<div class="example"><div class="label">Map</div><div class="map"><div class="node">P1: Demand exceeds available seats after 18:00</div><div class="node">P2: Exam-period study space is an educational need</div><div class="arrow">P1 + P2 ↓ linked support</div><div class="node">IC: Current evening access is insufficient</div><div class="arrow">↓ serial support</div><div class="node">C: Extend exam-period library hours</div></div></div>
+<h2>Why mapping helps</h2><p>Mapping prevents a common error: criticizing one premise as if it were the whole case. It also exposes unsupported sub-conclusions and clarifies whether a counterargument attacks evidence, inference, or the final claim.</p>`,
+          q: 'Two independent studies and a separate cost analysis each support the same policy. What structure is most likely?',
+          opts: ['Linked', 'Convergent', 'Circular', 'No argument'],
+          a: 1,
+          why: 'If each reason offers some support independently, the structure is convergent.',
+        },
+        {
+          part: 'II. Standards',
+          title: 'Deductive, Inductive, and Abductive Support',
+          sub: 'Use the standard that fits the kind of support being claimed.',
+          objectives: [
+            'Separate validity from truth',
+            'Evaluate induction and inference to the best explanation with appropriate criteria',
+          ],
+          body: `
+<h2>Deductive support</h2><p>A deductive argument presents its conclusion as necessary if its premises are true. <strong>Validity</strong> concerns structure, not actual truth. A <strong>sound</strong> argument is valid and has true premises.</p>
+<h2>Inductive support</h2><p>An inductive argument presents its conclusion as probable or well-supported rather than guaranteed. A <strong>strong</strong> inductive argument gives substantial support; a <strong>cogent</strong> one is strong and has acceptable or true premises. Terminology varies across textbooks, so state the standard you use.</p>
+<h2>Abductive support</h2><p>Abduction proposes the best available explanation. Compare hypotheses using criteria such as explanatory scope, fit with evidence, simplicity, background knowledge, predictive success, and performance against alternatives.</p>
+<div class="example"><div class="label">Abduction done carefully</div><p>Observation: several students cannot access the course site. Hypotheses include a server outage, expired accounts, local network failure, or user error. The best explanation is not simply the first plausible story. Check which hypothesis explains the pattern and survives testing.</p></div>
+<div class="callout good"><strong>Qualifier discipline:</strong> Match language to support. Use “must” only for necessity, “probably” for strong but defeasible support, and “possibly” for mere compatibility.</div>`,
+          q: 'A deductively valid argument has one false premise. What follows?',
+          opts: [
+            'It is sound',
+            'Its conclusion must be false',
+            'It is unsound, though its conclusion may still be true',
+            'It becomes inductive',
+          ],
+          a: 2,
+          why: 'Validity does not guarantee true premises. The conclusion can still happen to be true, but the argument is not sound.',
+        },
+        {
+          part: 'II. Standards',
+          title: 'Evidence, Sources, and Causal Claims',
+          sub: 'Test not only whether evidence exists, but whether it is credible, relevant, and sufficient.',
+          objectives: [
+            'Apply credibility, relevance, and sufficiency tests',
+            'Avoid common causal errors',
+          ],
+          body: `
+<h2>Three core tests</h2><ul><li><strong>Acceptability or credibility:</strong> Is the information trustworthy and accurately represented?</li><li><strong>Relevance:</strong> Does it bear on this claim through a defensible inference?</li><li><strong>Sufficiency:</strong> Is there enough support, given the strength and consequence of the claim?</li></ul>
+<h2>Source checks</h2><p>Ask about expertise, method, independence, transparency, date, directness, and agreement with the wider evidence. A source can be credible yet irrelevant, relevant yet weak, or accurate but quoted out of context.</p>
+<h2>Causation needs more than sequence</h2><p>When A and B are associated, consider coincidence, reverse causation, common causes, selection effects, measurement error, and mechanisms. Strong causal cases often combine temporal order, covariation, plausible mechanism, controls, replication, and evidence against alternatives.</p>
+<div class="practice"><div class="label">Causal checklist</div><ol><li>What exactly are A and B?</li><li>How were they measured?</li><li>Could B cause A?</li><li>What third factor could cause both?</li><li>Does the effect replicate, and under what conditions?</li></ol></div>`,
+          q: 'A survey finds that students who use a study app have higher grades. What is the safest conclusion?',
+          opts: [
+            'The app definitely causes higher grades',
+            'The variables are associated; motivation or prior achievement may partly explain the pattern',
+            'Grades cause phones to exist',
+            'The survey is useless',
+          ],
+          a: 1,
+          why: 'Association is evidence worth investigating, but the design described does not by itself rule out confounding or reverse causation.',
+        },
+        {
+          part: 'III. Practical Models',
+          title: 'The Toulmin Layout',
+          sub: 'Make the often-hidden bridge between evidence and claim visible.',
+          objectives: [
+            'Identify claim, grounds, warrant, backing, qualifier, and rebuttal conditions',
+            'Avoid treating rebuttal as merely “the opposite opinion”',
+          ],
+          body: `
+<h2>Six functional elements</h2><table><tr><th>Element</th><th>Question</th></tr><tr><td>Claim</td><td>What are you asking the audience to accept?</td></tr><tr><td>Grounds or data</td><td>What are you going on?</td></tr><tr><td>Warrant</td><td>Why do those grounds support this claim?</td></tr><tr><td>Backing</td><td>Why trust the warrant?</td></tr><tr><td>Qualifier</td><td>How strongly does the claim hold?</td></tr><tr><td>Rebuttal</td><td>Under what exceptional conditions would the inference not hold?</td></tr></table>
+<div class="example"><div class="label">Full layout</div><p><strong>Grounds:</strong> Evening occupancy exceeded 95% on 18 of 20 exam-period weekdays.<br><strong>Claim:</strong> The university should probably extend library hours during exams.<br><strong>Warrant:</strong> When essential study capacity is predictably insufficient, extending access is an appropriate response.<br><strong>Backing:</strong> The university’s access commitments and usage records.<br><strong>Qualifier:</strong> Probably.<br><strong>Rebuttal condition:</strong> Unless staffing or safety costs are disproportionate, or equally effective lower-cost capacity is available.</p></div>
+<div class="callout info">In Toulmin’s technical layout, a rebuttal is primarily a <strong>condition of exception</strong> to the qualified claim or warrant. In classroom writing, “rebuttal” is also often used more broadly for a response to a counterargument. Keep the two uses distinct.</div>`,
+          q: 'Which Toulmin element answers “Why does this evidence count in favor of that claim?”',
+          opts: ['Qualifier', 'Warrant', 'Claim', 'Rebuttal'],
+          a: 1,
+          why: 'The warrant authorizes or explains the move from grounds to claim.',
+        },
+        {
+          part: 'III. Practical Models',
+          title: 'Argumentation Schemes and Critical Questions',
+          sub: 'Classify recurring defeasible patterns, then test them with scheme-specific questions.',
+          objectives: [
+            'Recognize common presumptive schemes',
+            'Use critical questions as tests, not automatic refutations',
+          ],
+          body: `
+<h2>Schemes are defeasible patterns</h2><p>Argumentation schemes represent recurring forms of practical reasoning, such as expert opinion, sign, analogy, cause, consequences, example, and practical reasoning. They usually provide <strong>presumptive</strong> support that can be defeated by new information.</p>
+<h3>Expert opinion</h3><div class="argument">E is credible in domain D.<br>E asserts P within D.<br>Therefore, P is presumptively acceptable.</div><p>Critical questions: Is the field relevant? Is the source accurately quoted? Is the source trustworthy? Is the claim evidence-based? Do qualified experts substantially disagree?</p>
+<h3>Analogy</h3><div class="argument">A is relevantly similar to B.<br>P holds in A.<br>Therefore, P plausibly holds in B.</div><p>Critical questions: Which similarities do the work? Are there relevant differences? Is there a counter-analogy?</p>
+<h3>Practical reasoning</h3><div class="argument">Goal G is worthwhile.<br>Action A is a feasible means to G.<br>Therefore, there is a reason to do A.</div><p>Ask about side effects, alternative means, conflicting goals, feasibility, proportionality, and uncertainty.</p>
+<div class="callout"><strong>Burden-of-proof nuance:</strong> Raising a critical question identifies a possible vulnerability. It does not always overturn the argument immediately. The effect depends on the scheme, dialogue context, and whether the question points to a credible exception or merely asks for clarification.</div>`,
+          q: 'What is the best use of a critical question?',
+          opts: [
+            'Treat it as proof that the argument is false',
+            'Use it to test a scheme-specific vulnerability and request relevant support',
+            'Replace evidence with disagreement',
+            'Apply the same checklist to every argument',
+          ],
+          a: 1,
+          why: 'Critical questions guide targeted evaluation. They are not labels that automatically defeat a claim.',
+        },
+        {
+          part: 'IV. Dialogue and Rhetoric',
+          title: 'Pragma-Dialectics',
+          sub: 'Evaluate argumentative discourse as an attempt to resolve a difference of opinion reasonably.',
+          objectives: [
+            'Identify the four stages of a critical discussion',
+            'Connect fallacies to obstacles to resolution',
+          ],
+          body: `
+<h2>The ideal model</h2><ol><li><strong>Confrontation:</strong> the difference of opinion becomes clear.</li><li><strong>Opening:</strong> roles, shared starting points, and procedural commitments are established.</li><li><strong>Argumentation:</strong> the standpoint is defended and critically tested.</li><li><strong>Concluding:</strong> parties determine whether the standpoint or doubt should be retracted.</li></ol><p>This is an analytical and normative model, not a claim that ordinary conversations literally proceed in four neat steps.</p>
+<h2>Ten rules in plain language</h2><ol><li>Do not block standpoints or doubt.</li><li>Defend a standpoint when properly challenged.</li><li>Attack the standpoint actually advanced.</li><li>Use relevant argumentation.</li><li>Handle implicit premises fairly.</li><li>Represent shared starting points accurately.</li><li>Use an appropriate scheme correctly.</li><li>Use valid reasoning, or make implicit premises explicit so validity can be tested.</li><li>Accept the proper outcome of a successful or failed defense.</li><li>Use clear formulations and interpret others carefully.</li></ol>
+<div class="callout info"><strong>Fallacies as derailments:</strong> A straw man obstructs resolution by attacking a standpoint the other party did not advance. A personal attack violates the freedom rule when it discredits or silences a participant instead of addressing the case. Context and function matter.</div>`,
+          q: 'At which stage are shared starting points and discussion roles established?',
+          opts: ['Confrontation', 'Opening', 'Argumentation', 'Concluding'],
+          a: 1,
+          why: 'The opening stage establishes commitments and procedural starting points for testing the standpoint.',
+        },
+        {
+          part: 'IV. Dialogue and Rhetoric',
+          title: 'Strategic Maneuvering',
+          sub: 'Balance dialectical reasonableness with rhetorical effectiveness.',
+          objectives: [
+            'Identify the three aspects of strategic maneuvering',
+            'Distinguish legitimate adaptation from derailment',
+          ],
+          body: `
+<h2>Three coordinated choices</h2><ul><li><strong>Topical potential:</strong> selecting from the argumentative moves available at a stage.</li><li><strong>Audience demand:</strong> adapting to beliefs, preferences, and commitments relevant to the audience.</li><li><strong>Presentational devices:</strong> choosing wording, ordering, examples, metaphors, and visuals.</li></ul>
+<p>Strategic maneuvering is normal. It derails when effectiveness gains are pursued at the expense of the rules and purpose of critical discussion.</p>
+<div class="grid2"><div class="mini"><h4>Legitimate</h4><p>Choose the strongest relevant reason, explain technical evidence accessibly, and use a vivid but representative example.</p></div><div class="mini"><h4>Derailment</h4><p>Suppress decisive counterevidence, exploit ambiguity, misrepresent a critic, or use emotion to block scrutiny.</p></div></div>
+<div class="practice"><div class="label">Reflect</div><p>For any persuasive choice, ask: Does this help the audience understand and assess the case, or does it make critical testing harder?</p></div>`,
+          q: 'Which action best illustrates legitimate strategic maneuvering?',
+          opts: [
+            'Hiding a study that contradicts your claim',
+            'Explaining a relevant statistic with an accurate visual for a non-specialist audience',
+            'Misquoting an opponent for simplicity',
+            'Threatening a critic',
+          ],
+          a: 1,
+          why: 'Accessible and accurate presentation can improve effectiveness without undermining reasonableness.',
+        },
+        {
+          part: 'IV. Dialogue and Rhetoric',
+          title: 'The New Rhetoric and Audience',
+          sub: 'Understand argumentation as audience-oriented reasoning without reducing quality to popularity.',
+          objectives: [
+            'Distinguish particular and universal audience constructions',
+            'Recognize association, dissociation, presence, and starting points',
+          ],
+          body: `
+<h2>Audience is constructed by the arguer</h2><p>For Perelman and Olbrechts-Tyteca, argumentation seeks to gain or increase adherence to theses. The relevant audience is not merely everyone physically present. It is the audience the arguer imagines and seeks to influence.</p>
+<h2>Particular and universal audiences</h2><p>A <strong>particular audience</strong> is a specific group with concrete commitments. The <strong>universal audience</strong> is an argumentative construction of competent and reasonable persons, used as a standard for claims presented as broadly reasonable. It is not simply a headcount of all people, nor a fixed empirical group.</p>
+<h2>Starting points and techniques</h2><ul><li><strong>Starting points:</strong> facts, truths, presumptions, values, hierarchies, and preferred ways of ordering values.</li><li><strong>Presence:</strong> making selected considerations salient to consciousness.</li><li><strong>Association:</strong> linking elements through quasi-logical relations, relations based on the structure of reality, or cases that establish such structure, such as example, illustration, and model.</li><li><strong>Dissociation:</strong> separating concepts previously treated as a unity, often by distinguishing appearance from reality or letter from spirit.</li></ul>
+<div class="callout">Audience adaptation does not mean “anything goes.” A message can fit an audience yet remain misleading, weakly supported, or unfair. Rhetorical effectiveness and critical quality require separate assessment.</div>`,
+          q: 'What is Perelman’s universal audience?',
+          opts: [
+            'Every person currently alive',
+            'The largest measurable audience',
+            'An argumentative construction of competent and reasonable persons',
+            'Only academic philosophers',
+          ],
+          a: 2,
+          why: 'The universal audience is a normative rhetorical construction, not a literal census or fixed group.',
+        },
+        {
+          part: 'V. Critical Practice',
+          title: 'Fallacies Without the Labeling Trap',
+          sub: 'Diagnose what went wrong, why it matters, and how the context affects the judgment.',
+          objectives: [
+            'Treat fallacies as contextual failures rather than magic words',
+            'Differentiate weak argument, scheme misuse, and dialogue obstruction',
+          ],
+          body: `
+<h2>A label is the beginning, not the end</h2><p>Calling something “ad hominem” or “slippery slope” is useful only if you explain the argumentative function and defect. Some personal information is relevant to credibility; some consequence chains are well-supported; some appeals to emotion communicate morally relevant stakes.</p>
+<table><tr><th>Pattern</th><th>Diagnostic question</th></tr><tr><td>Straw man</td><td>Was the criticized position materially distorted?</td></tr><tr><td>Ad hominem</td><td>Is the personal consideration relevant to credibility or merely replacing engagement with the argument?</td></tr><tr><td>False dilemma</td><td>Were relevant alternatives wrongly excluded?</td></tr><tr><td>Hasty generalization</td><td>Is the sample sufficiently large and representative for the conclusion?</td></tr><tr><td>Slippery slope</td><td>Is each link in the projected chain supported, and are safeguards considered?</td></tr><tr><td>Begging the question</td><td>Does the support depend on accepting what is already disputed?</td></tr><tr><td>Appeal to ignorance</td><td>Is absence of disproof being treated as proof, despite the burden of proof?</td></tr><tr><td>Equivocation</td><td>Does a key term shift meaning during the inference?</td></tr></table>
+<div class="example"><div class="label">Context matters</div><p>“The witness has repeatedly fabricated results, so this testimony needs independent verification.” This is not automatically an irrelevant personal attack. Documented reliability is relevant when testimony is used as evidence. It would still be wrong to conclude, without further analysis, that every claim made by the witness is false.</p></div>`,
+          q: 'Which response gives the strongest fallacy analysis?',
+          opts: [
+            '“Ad hominem!”',
+            '“That is emotional.”',
+            '“The remark attacks the speaker’s unrelated private life and does not address the evidence for the policy claim.”',
+            '“I disagree.”',
+          ],
+          a: 2,
+          why: 'It identifies the move, explains irrelevance, and connects the defect to the argumentative task.',
+        },
+        {
+          part: 'V. Critical Practice',
+          title: 'Counterarguments, Rebuttals, and Burdens',
+          sub: 'Respond to the strongest relevant objection and track who must support what.',
+          objectives: [
+            'Distinguish objection, counterargument, concession, and response',
+            'Apply burden of proof proportionately',
+          ],
+          body: `
+<h2>Four useful moves</h2><ul><li><strong>Objection:</strong> identifies a problem or asks a critical question.</li><li><strong>Counterargument:</strong> provides reasons supporting an incompatible or competing conclusion.</li><li><strong>Concession:</strong> accepts a limited point without surrendering the main claim.</li><li><strong>Response or rebuttal:</strong> explains why the objection does not defeat the claim, or revises the claim appropriately.</li></ul>
+<h2>Burden of proof</h2><p>The party advancing a contestable claim normally bears an initial burden. Burdens increase with specificity, improbability, risk, and consequence. A critic who makes a new positive accusation also acquires a burden for that accusation. “Prove me wrong” does not discharge an original burden.</p>
+<div class="example"><div class="label">Strong response pattern</div><p><strong>Objection:</strong> Longer hours raise staffing costs.<br><strong>Concession:</strong> Yes, the proposal has non-trivial costs.<br><strong>Response:</strong> Pilot it for four exam weeks, compare cost per additional student-hour with opening another facility, and adopt only if the threshold is met.<br><strong>Revision:</strong> The university should run a cost-bounded pilot, not commit immediately to permanent extension.</p></div><p>A qualified revision often shows better reasoning than defensive refusal to change.</p>`,
+          q: 'Who bears the initial burden for the claim “This new policy will reduce dropout by 30%”?',
+          opts: [
+            'Anyone who hears it',
+            'The person advancing the quantified prediction',
+            'Only critics',
+            'No one, because it concerns the future',
+          ],
+          a: 1,
+          why: 'A specific empirical prediction requires support from the person who advances it.',
+        },
+        {
+          part: 'VI. Contemporary Literacy',
+          title: 'Arguments in the Age of Generative AI',
+          sub: 'Use AI as a reasoning aid without outsourcing judgment, evidence, or responsibility.',
+          objectives: [
+            'Verify AI-generated claims and citations',
+            'Use AI to surface assumptions, alternatives, and counterarguments',
+          ],
+          body: `
+<h2>What AI can usefully do</h2><ul><li>Extract a provisional claim-premise map for human checking.</li><li>Generate alternative interpretations and counterarguments.</li><li>Suggest applicable argumentation schemes and critical questions.</li><li>Help revise wording, qualifiers, and organization.</li></ul>
+<h2>What requires human verification</h2><ul><li>Whether quotations, citations, data, and named sources exist and are represented accurately.</li><li>Whether a reconstructed premise is genuinely implied by context.</li><li>Whether evidence is current, representative, and methodologically sound.</li><li>Whether a persuasive response is fair to affected people and appropriate to the decision.</li></ul>
+<div class="callout info"><strong>Verification protocol:</strong> Separate generated text into checkable claims; locate primary or authoritative sources; compare the source with the wording; record uncertainty; and remove any citation you cannot verify.</div>
+<div class="practice"><div class="label">Prompt pattern</div><p>“Map the argument below. Mark every implicit premise as a hypothesis, not a fact. Identify the likely scheme, ask its critical questions, give the strongest counterargument, and list every factual claim requiring external verification.”</p></div>
+<p>AI fluency is not the same as argument quality. Treat confident wording as presentation, not evidence.</p>`,
+          q: 'An AI tool provides a plausible quotation and a complete-looking citation. What should you do?',
+          opts: [
+            'Use it because the formatting is correct',
+            'Verify the source exists and that the quotation and context match',
+            'Ask the AI whether it is confident',
+            'Remove quotation marks but keep the claim',
+          ],
+          a: 1,
+          why: 'Plausibility and formatting do not establish authenticity or accurate representation.',
+        },
+        {
+          part: 'VI. Contemporary Literacy',
+          title: 'Integrated Analysis Workshop',
+          sub: 'Apply the complete workflow to a realistic higher-education policy argument.',
+          objectives: [
+            'Move from contextualization to mapping, evaluation, response, and revision',
+            'Produce an accountable overall judgment',
+          ],
+          body: `
+<h2>Case</h2><div class="example"><p>“Universities should prohibit generative AI in first-year writing. Students who use it will not learn to write, detection tools can identify misuse, and allowing it will inevitably make degrees meaningless.”</p></div>
+<h2>1. Clarify the standpoint</h2><p>Does “prohibit” cover brainstorming, translation, feedback, accessibility support, and instructor-designed activities? Does it apply to assessment only or all learning?</p>
+<h2>2. Map the support</h2><ul><li>P1: Some AI uses replace writing practice.</li><li>P2: Detection can enforce a prohibition.</li><li>P3: Permitted use will lead to loss of degree value.</li><li>C: Prohibit generative AI in first-year writing.</li></ul>
+<h2>3. Evaluate</h2><ul><li>P1 is plausible for some uses, but overgeneralized without distinguishing substitution from scaffolded use.</li><li>P2 requires validity, reliability, due-process, and false-positive evidence.</li><li>P3 is a slippery-slope prediction unless the causal chain and lack of safeguards are supported.</li><li>The conclusion ignores alternatives: disclosure rules, process evidence, oral follow-up, staged drafting, and task redesign.</li></ul>
+<h2>4. Steelman and revise</h2><p>A stronger policy claim is: “First-year writing courses should prohibit undisclosed AI-generated submission while explicitly teaching permitted, documented uses and requiring evidence of the student’s composing process.” This narrower claim better matches the educational goal and permits proportionate assessment.</p>
+<h2>5. Overall judgment</h2><p>The original argument raises a legitimate learning concern but does not yet justify a blanket prohibition. Its key empirical and causal premises need evidence, and its policy design needs alternatives and safeguards.</p>`,
+          q: 'What most improves the original policy argument?',
+          opts: [
+            'Use stronger language',
+            'Define prohibited use, provide evidence for causal and enforcement claims, and compare alternatives',
+            'Add more fallacy labels',
+            'Remove all qualifications',
+          ],
+          a: 1,
+          why: 'A defensible policy argument needs clarity, evidence, proportionality, and comparison with feasible alternatives.',
+        },
+      ];
+      modules.forEach((m, i) => {
+        m.id = 'm' + (i + 1);
+      });
+      const glossary = [
+        ['Argument', 'Reasons offered to support or challenge a claim.'],
+        [
+          'Argumentation',
+          'The activity of advancing, testing, defending, revising, or withdrawing standpoints.',
+        ],
+        [
+          'Standpoint',
+          'A positive or negative position regarding a proposition.',
+        ],
+        ['Premise', 'A reason offered in support of a conclusion.'],
+        [
+          'Inference',
+          'The support relation or move from premises to conclusion.',
+        ],
+        [
+          'Linked support',
+          'Premises that work together and lose substantial force when separated.',
+        ],
+        [
+          'Convergent support',
+          'Independent reasons supporting the same conclusion.',
+        ],
+        [
+          'Serial support',
+          'A chain in which a sub-conclusion becomes a premise for a further conclusion.',
+        ],
+        [
+          'Validity',
+          'A deductive property: true premises could not lead to a false conclusion.',
+        ],
+        ['Soundness', 'Validity plus true premises.'],
+        [
+          'Defeasible',
+          'Capable of being overturned by new information or exceptions.',
+        ],
+        [
+          'Enthymeme',
+          'A rhetorical argument with material left implicit for the audience to supply.',
+        ],
+        [
+          'Warrant',
+          'In the Toulmin layout, the bridge authorizing the move from grounds to claim.',
+        ],
+        [
+          'Argumentation scheme',
+          'A recurring pattern of reasoning with associated critical questions.',
+        ],
+        [
+          'Critical question',
+          'A scheme-specific test of a possible vulnerability.',
+        ],
+        [
+          'Burden of proof',
+          'An obligation to provide adequate support for a challenged claim.',
+        ],
+        [
+          'Pragma-dialectics',
+          'A theory that models argumentation as a critical discussion aimed at resolving a difference of opinion.',
+        ],
+        [
+          'Strategic maneuvering',
+          'The effort to combine reasonableness with rhetorical effectiveness.',
+        ],
+        [
+          'Universal audience',
+          'Perelman’s construction of competent and reasonable persons used to test broadly addressed argumentation.',
+        ],
+        [
+          'Fallacy',
+          'A contextually relevant argumentative defect or discussion move that obstructs reasonable assessment or resolution.',
+        ],
+        [
+          'Steelman',
+          'A fair reconstruction of the strongest interpretation reasonably supported by the text and context.',
+        ],
+      ];
+      let state = { current: 'home', answers: {}, done: {} };
+      const KEY = 'arguewell_v2';
+      function load() {
+        try {
+          Object.assign(state, JSON.parse(localStorage.getItem(KEY) || '{}'));
+        } catch (e) {}
+      }
+      function save() {
+        localStorage.setItem(KEY, JSON.stringify(state));
+      }
+      function renderNav() {
+        const n = document.getElementById('nav');
+        let p = '';
+        n.innerHTML = '';
+        const home = document.createElement('button');
+        home.className = 'nav' + (state.current === 'home' ? ' active' : '');
+        home.innerHTML =
+          '<span class="num">00</span><span>Home</span><span></span>';
+        home.onclick = () => go('home');
+        n.appendChild(home);
+        modules.forEach((m, i) => {
+          if (m.part !== p) {
+            p = m.part;
+            n.insertAdjacentHTML('beforeend', `<div class="part">${p}</div>`);
+          }
+          const b = document.createElement('button');
+          b.className = 'nav' + (m.id === state.current ? ' active' : '');
+          b.innerHTML = `<span class="num">${String(i + 1).padStart(2, '0')}</span><span>${m.title}</span><span class="tick ${state.done[m.id] ? 'done' : ''}">${state.done[m.id] ? '✓' : ''}</span>`;
+          b.onclick = () => go(m.id);
+          n.appendChild(b);
+        });
+        const done = Object.keys(state.done).filter(
+          (k) => state.done[k],
+        ).length;
+        document.getElementById('progressText').textContent =
+          `${done}/${modules.length}`;
+        document.getElementById('progressFill').style.width =
+          (done / modules.length) * 100 + '%';
+      }
+      function render(scrollTop = true) {
+        const main = document.getElementById('main');
+        if (state.current === 'home') {
+          main.innerHTML = `
+            <article class="module">
+              <div class="eyebrow">Welcome to ArgueWell</div>
+              <div class="home-hero">
+                <h2>Learn to think, test, and build better arguments.</h2>
+                <p>ArgueWell is a short, interactive course on argumentation. It helps you separate claims from reasons, evaluate support fairly, recognize common weaknesses, and respond without losing sight of evidence or context.</p>
+                <div class="home-actions">
+                  <button class="btn primary" onclick="go('m1')">Start the course →</button>
+                  <button class="btn outline" onclick="go('m1')">Browse the modules</button>
+                </div>
+              </div>
+              <div class="content">
+                <h2>What you will practice</h2>
+                <div class="grid2">
+                  <div class="mini"><h4>Understand</h4><p>Identify standpoints, premises, inferences, audiences, and dialogue goals.</p></div>
+                  <div class="mini"><h4>Evaluate</h4><p>Test relevance, acceptability, support, evidence, alternatives, and possible fallacies.</p></div>
+                  <div class="mini"><h4>Respond</h4><p>Build objections, counterarguments, concessions, and proportionate replies.</p></div>
+                  <div class="mini"><h4>Apply</h4><p>Work through realistic examples and check your understanding after each module.</p></div>
+                </div>
+                <div class="callout info"><strong>How to use this course:</strong> Read each module, answer its knowledge check, and use the feedback to refine your analysis. You can return to any module from the course menu.</div>
+              </div>
+            </article>`;
+          if (scrollTop) {
+            main.focus();
+            window.scrollTo(0, 0);
+          }
+          return;
+        }
+        const m = modules.find((x) => x.id === state.current) || modules[0],
+          i = modules.indexOf(m),
+          selected = state.answers[m.id];
+        main.innerHTML =
+          `<article class="module"><div class="eyebrow">${m.part} · Module ${i + 1} of ${modules.length}</div><h1>${m.title}</h1><p class="lead">${m.sub}</p><div class="objectives"><strong>Learning outcomes</strong><ul>${m.objectives.map((x) => `<li>${x}</li>`).join('')}</ul></div><div class="content">${m.body}</div>${quiz(m, selected)}<div class="sources"><strong>Course note:</strong> Examples are instructional and simplified. Evaluate real cases with their full context, evidence, and dialogue purpose. The bibliography is listed in the final section below.</div><div class="navbuttons"><button class="btn outline" onclick="go('${i ? modules[i - 1].id : 'home'}')">← ${i ? 'Previous' : 'Home'}</button>${i < modules.length - 1 ? `<button class="btn primary" onclick="go('${modules[i + 1].id}')">Next →</button>` : '<button class="btn primary" onclick="openBibliography()">Bibliography</button>'}</div></article>`;
+        if (scrollTop) {
+          main.focus();
+          window.scrollTo(0, 0);
+        }
+      }
+      function quiz(m, s) {
+        const answered = s !== undefined;
+        return `<section class="quiz" aria-label="Knowledge check" tabindex="-1"><div class="label">Check your understanding</div><h3>${m.q}</h3><div class="options">${m.opts.map((o, i) => `<button class="option ${answered ? (i === m.a ? 'correct' : i === s ? 'wrong' : '') : ''}" ${answered ? 'disabled' : ''} onclick="answer('${m.id}',${i})">${String.fromCharCode(65 + i)}. ${o}</button>`).join('')}</div>${answered ? `<div class="feedback ${s === m.a ? 'ok' : 'no'}"><strong>${s === m.a ? 'Correct.' : 'Not quite.'}</strong> ${m.why}</div>` : ''}</section>`;
+      }
+      function answer(id, i) {
+        state.answers[id] = i;
+        const m = modules.find((x) => x.id === id);
+        if (i === m.a) state.done[id] = true;
+        save();
+        renderNav();
+        render(false);
+        document.querySelector('.quiz')?.focus();
+      }
+      function go(id) {
+        state.current = id;
+        save();
+        renderNav();
+        render();
+        document.getElementById('sidebar').classList.remove('open');
+      }
+      function openModal(inner) {
+        document.getElementById('modal').innerHTML = inner;
+        document.getElementById('modalBg').classList.add('show');
+      }
+      function closeModal() {
+        document.getElementById('modalBg').classList.remove('show');
+      }
+      function openGlossary() {
+        openModal(
+          `<div class="modal-head"><h2 id="modalTitle">Glossary</h2><button class="btn" onclick="closeModal()" aria-label="Close">✕</button></div><input id="search" class="search" placeholder="Search terms or definitions" aria-label="Search glossary"><div id="terms">${glossary.map((g) => `<div class="term"><b>${g[0]}</b><span>${g[1]}</span></div>`).join('')}</div>`,
+        );
+        document.getElementById('search').oninput = (e) => {
+          const q = e.target.value.toLowerCase();
+          document
+            .querySelectorAll('.term')
+            .forEach(
+              (t) =>
+                (t.style.display = t.textContent.toLowerCase().includes(q)
+                  ? ''
+                  : 'none'),
+            );
+        };
+      }
+      function openBibliography() {
+        openModal(
+          `<div class="modal-head"><h2 id="modalTitle">Selected bibliography</h2><button class="btn" onclick="closeModal()" aria-label="Close">✕</button></div><p>These are starting points for instructors and advanced learners.</p><ul><li>van Eemeren, F. H., & Grootendorst, R. (2004). <em>A Systematic Theory of Argumentation</em>.</li><li>van Eemeren, F. H. (2010). <em>Strategic Maneuvering in Argumentative Discourse</em>.</li><li>Toulmin, S. E. (1958/2003). <em>The Uses of Argument</em>.</li><li>Walton, D., Reed, C., & Macagno, F. (2008). <em>Argumentation Schemes</em>.</li><li>Perelman, C., & Olbrechts-Tyteca, L. (1969). <em>The New Rhetoric</em>.</li><li>Govier, T. (2010). <em>A Practical Study of Argument</em>.</li><li>Blair, J. A. (2012). <em>Groundwork in the Theory of Argumentation</em>.</li></ul><p class="small">The app deliberately presents multiple traditions as complementary lenses. Their vocabularies and evaluative commitments should not be treated as perfectly interchangeable.</p>`,
+        );
+      }
+      document.getElementById('menuBtn').onclick = () =>
+        document.getElementById('sidebar').classList.toggle('open');
+      document.getElementById('glossaryBtn').onclick = openGlossary;
+      document.getElementById('resetBtn').onclick = () => {
+        localStorage.removeItem(KEY);
+        state = { current: 'home', answers: {}, done: {} };
+        renderNav();
+        render();
+      };
+      document.getElementById('modalBg').onclick = (e) => {
+        if (e.target.id === 'modalBg') closeModal();
+      };
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeModal();
+      });
+      load();
+      renderNav();
+      render();
+    </script>
+  </body>
+</html>
